@@ -1,0 +1,10 @@
+version: "3.0"
+services:
+  pintos:
+    command: bash -c "sleep infinity"
+    build: .
+    environment:
+        - TERM=xterm-256color
+    volumes:
+      - ./home/.bashrc:/root/.bashrc
+      - ./src:/root/src
