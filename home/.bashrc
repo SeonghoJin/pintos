@@ -118,3 +118,5 @@ if ! shopt -oq posix; then
 fi
 
 export PATH=$PATH:/home/${someuser}
+export PATH="$PATH:/root/workspace/pintos/src/utils"
+
