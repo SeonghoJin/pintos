@@ -1,0 +1,45 @@
+pintos에서 gdb간략 사용법.
+일단 pintos를 실행할 때 --gdb옵션을 같이 넣어서 실행한다.
+1) pintos --gdb -- run mytest
+
+그 다음 같은 환경의 또 다른 터미널을 키고 
+2) pintos-gdb kernel.o를 킨다.
+
+3) target remote localhost:1234를 실행한다.
+
+이제 gdb는 로컬 네트워크을 통해서 시뮬레이터와 연결된것이다.
+이제 일반적인 gdb 커맨드를 실행할 수 있다.
+
+c : 다음 브레이크포인트나 ctrl+c가 눌릴때까지 계속 실행
+
+break function
+break file:line
+break *address
+ - 브레이크 포인터 설정
+
+p expression :
+	주어진 변수의 값을 프린트한다.  
+
+l 코드를 보여준다.
+
+bt 스택 출력한다.
+
+p/a adress 함수와 변수 모두 출력
+
+help user-defined로 검색하면, 특별하게 제작된 디버깅 매크로가 있다.
+pintos-gdb의 디버깅매크로를 사용하기 위해서는 약간의 수정이 필요하다.
+
+pintos/src/utils/pintos-gdb의 내용을 보면,
+GDBMACROS가 있는데, 사용자에 따라서 경로를 수정해줄 필요가 있다.
+
+이 GDBMACROS의 경로가 가르켜야할 저의 경우에는 장소는 /root/workspace/pintos/src/misc/gdb-macros
+
+gdb macros가 가장 유용하게 사용 되는 경우는
+교착상태나 설명할 수 없는 정지를 진단 할때이다.
+
+예를 들어 교착상태가 일어났을 때, bt를 하면, 단순히 그 쓰레드에 일어나는 
+정지만 나온다. 그러나 btthreadlist all_list allelem 을 하게되면,
+모든 쓰레드에서 backtrace를 하게 된다.
+
+gdb는 핀토스 커널에서 생성된 것으로 추측을 하기 때문에 현재 활성화된 프로세스가 무엇
+인지 모른다.

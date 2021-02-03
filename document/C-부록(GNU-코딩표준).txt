@@ -1,0 +1,78 @@
+한 행에 79자 이내로 작성하라. 
+
+함수 선언방법
+
+static char *
+concat (char *s1, char *s2)
+{
+  …
+}
+
+struct 선언방법
+struct foo
+{
+  int a, b;
+}
+
+( 앞과 ,뒤에 공백이 있으면 더욱 읽기 쉽다.
+if (x < foo (y, z))
+  haha = bar[4] + 5;
+else
+  {
+    while (z)
+      {
+        haha += foo (z, z);
+        z--;
+      }
+    return ++x + bar ();
+  }
+
+
+표현식에서 연산자를 기준으로 분할할때 항상 연산자 앞에서 분리하도록한다.
+if (foo_this_is_long && bar > win (x, y, z)
+    && remaining_condition)
+
+동일한 우선순위를 가지지 않으며 들여쓰기가 같다면 소괄호로 감싸주는게 좋다.'
+mode = ((inmode[j] == VOIDmode
+         || (GET_MODE_SIZE (outmode[j]) > GET_MODE_SIZE (inmode[j])))
+        ? outmode[j] : inmode[j]);
+
+emacs가 들여쓰기 하기 쉽도록 소괄호로 감싸주자.
+v = (rup->ru_utime.tv_sec*1000 + rup->ru_utime.tv_usec/1000
+    + rup->ru_stime.tv_sec*1000 + rup->ru_stime.tv_usec/1000);
+
+
+do while 포맷문
+do
+  {
+    a = foo (a);
+  }
+while (a > 0);
+
+-wall 옵션은 코드에 위험을 감지하여 경고한다. 이것은 사용자 마음대로 사용하든 안하든 해라
+컴파일러는 하인이되어야지, 주인이 되면안된다.
+
+정적도구분석따위는 쓰지마라!
+
+이런식으로 변수선언을 해라
+
+int foo, bar;
+
+int foo;
+int bar;
+
+전역변수나 함수는 일종의 주석이기 때문에 간결한 이름을 사용하지말고, 효율적인 정보를 줄 수 있도록 
+선정해라.
+
+로컬 변수는 그 문맥에서만 사용되기 때문에 짧게 명시해라
+ㄱ리고 변수이름은 스네이크 표현법으로해라.
+5.4 ^-----------------
+
+
+
+
+
+
+
+
+

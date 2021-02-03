@@ -1,0 +1,4 @@
+docker-compose exec pintos bash
+docker-compse up -d
+docker-compose restart pintos
+docker-compose start pintos

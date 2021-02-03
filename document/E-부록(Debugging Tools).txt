@@ -1,0 +1,126 @@
+디버깅하는 법
+1. printf
+printf도 굉장히 강력한 기능이 될 수 있다.
+pintos어디에서든 printf함수를 호출할 수 있다. 
+printf 호출해서 디버깅하라는 뜻
+
+2. assert
+assert를 쓰면 문제를 미리 알 수 있기 때문에 유용하다.
+핀토스는  debug.h에 정의된 ASSERT매크로를 제공한다. 
+
+3. Function and Parameter Attributes
+이 매크로도 Debug.h에 정의되어 있다. 
+
+unused
+함수 매개변수에 추가할 수 있고, 매개 변수가 함수 내에서 사용되지 않을 수 있음을 컴파일러에게 알린다.
+따라서 사용되지 않는 다는 경고를 나타나지 않게 할 수 있다.
+
+no_return
+함수 원형에 추가하고 이는 함수가 리턴값이 없다는 것을 의미한다. 
+
+NO_INLINE
+함수 원형에 추가하고, inline함수로 내뱉지 않는 다는 것을 의미한다.
+
+PRINTF_FORMAT(format, first)
+
+4. Backtraces
+커널 패닉이 발생하면, backtrace를 추적할 것이다. backtrace는 패닉이 일어났을 때 돌아가던 함수의 주소목록으로
+알 아낸 요약이다.
+
+- debug_backtrace, Debug_backtrace_all를 호출 할 수 있다 pintos어디에든
+- 백트레이스로 출력된 값들은 해석하기 어려운 16진수로 이루어져있다.
+우리는 백트레이스를 함수이름과 소스파일의 몇번째줄인지 해석해주는 도구를 제공한다.
+첫번째 인수로 kernel.o의 이름을 지정하고 그리고 나머지 인수로 백트래킹된 십육진수를 넣어라
+
+backtrace의 번역된 결과가 왜곡 되거나, 맞지 않는 경우는 좋은 신호다. 너가 커널 스레드를 붕괴시켰다는
+왜냐면 되추적은 스택에서 추출되기 때문이다.
+또는 역 추적에 전달한 kernel.o가 역추적을 생성한 커널과 같지 않을 수 있다.
+
+때때로 백트레이스는 어떤 충돌없이도 혼동될수 있다. 
+컴파일러의 최적화하 원인이될 수 있다. 
+tail call같은 경우에는 backtrace에서 나타나지 않을 수 있다. 
+A함수가 값을 리턴하지 않은 B를 호출할 때 일어날 수 있다.
+그리고 이는 컴파일러가 관련없는 C가 A로 backtrace에서 나타나도록 할 수 있다.
+함수 C가 단순히 메모리상 옆에 있는 경우
+threads project에서는 테스트 실패의 역추적에서 일반적으로 볼것이다. passFail, page18을 보면 더 많은 정보를 얻을 수 있다.
+
+다음과 같은 backtrace가 있다고 하자.
+Call stack: 0xc0106eff 0xc01102fb 0xc010dc22 0xc010cf67 0xc0102319
+0xc010325a 0x804812c 0x8048a96 0x8048ac8.
+
+역 추적  유틸리티를 호출하고 역 추정 정보를 잘라내어 명령 줄에 붙여넣으면 된다.
+backtrace kernel.o 0xc0106eff 0xc01102fb 0xc010dc22 0xc010cf67
+0xc0102319 0xc010325a 0x804812c 0x8048a96 0x8048ac8
+
+
+다음과 같이 결과가 나온다
+0xc0106eff: debug_panic (lib/debug.c:86)
+0xc01102fb: file_seek (filesys/file.c:405)
+0xc010dc22: seek (userprog/syscall.c:744)
+0xc010cf67: syscall_handler (userprog/syscall.c:444)
+0xc0102319: intr_handler (threads/interrupt.c:334)
+0xc010325a: intr_entry (threads/intr-stubs.S:38)
+0x0804812c: (unknown)
+0x08048a96: (unknown)
+0x08048ac8: (unknown)
+
+아마 정확하게 같은 주소를 보지 못할 것이다. 만약 너가 너의 커널 바이너리에서에서 명령을 실행하면,
+왜냐하면 너가 컴파일한 소스코드와 너가 사용했던 컴파일러는 다를 수 있으므로
+
+debug_panic은 커널 패닉을 구현한 함수이다. 왜냐하면, 백트레이스는 일반적으로 커널패닉의 결과이기 때문이다.
+디버그 패닉은 백트레이스에서 첫번째 줄에서 흔히 볼수 있을 것이다.
+두번째 줄에는 패닉을 일으킨 함수인 file_seek이 있다. 이 경우에는 assertion failure로 인한 것이다. 
+세번째 줄에는 seek이 file_seek을 호출한 것을 알수 있다. 
+실제로 이 폴더에 들어가보면 seek함수가 없는데, 아마도 file_seek함수를 호출하는 시스템을
+구현하지 않을 까 생각이든다.
+네번째 줄은 함수는 syscall_handler이며, seek을 호출한다.
+다섯번째와 6번째 함수는 인터럽트 핸들러 진입 공간이다.
+나머지 라인은 PHYS_BASE 아래 주소용도이다. 이는 유저 프로그램이 있는 주소라는 것을 의미한다.
+만약 어떤 유저 프로그램이 돌아가는 지 안다면 커널 충돌이 일어났을 때, 너는 backtrace를 다시 돌릴
+수 있다. 유저프로그램에서, 
+
+다음 예를 들 수 있다.
+
+backtrace tests/filesys/extended/grow-too-big 0xc0106eff 0xc01102fb
+0xc010dc22 0xc010cf67 0xc0102319 0xc010325a 0x804812c 0x8048a96
+0x8048ac8
+
+0xc0106eff: (unknown)
+0xc01102fb: (unknown)
+0xc010dc22: (unknown)
+0xc010cf67: (unknown)
+0xc0102319: (unknown)
+0xc010325a: (unknown)
+0x0804812c: test_main (...xtended/grow-too-big.c:20)
+0x08048a96: main (tests/main.c:10)
+0x08048ac8: _start (lib/user/entry.c:9)
+
+또한 커널과 사용자 프로그램 모두 넣을 수 도 있다.
+
+backtrace kernel.o tests/filesys/extended/grow-too-big 0xc0106eff
+0xc01102fb 0xc010dc22 0xc010cf67 0xc0102319 0xc010325a 0x804812c
+0x8048a96 0x8048ac8
+
+In kernel.o:
+0xc0106eff: debug_panic (lib/debug.c:86)
+0xc01102fb: file_seek (filesys/file.c:405)
+0xc010dc22: seek (userprog/syscall.c:744)
+0xc010cf67: syscall_handler (userprog/syscall.c:444)
+0xc0102319: intr_handler (threads/interrupt.c:334)
+0xc010325a: intr_entry (threads/intr-stubs.S:38)
+In tests/filesys/extended/grow-too-big:
+0x0804812c: test_main (...xtended/grow-too-big.c:20)
+0x08048a96: main (tests/main.c:10)
+0x08048ac8: _start (lib/user/entry.c:9)
+
+backtrace는 call stack을 제거하는데 있어서 충분합니다.
+CallStack 헤더와 .trailer도 삭제한다.
+
+
+
+
+
+
+
+
+
