@@ -340,6 +340,14 @@ thread_foreach (thread_action_func *func, void *aux)
 }
 
 /* Sets the current thread's priority to NEW_PRIORITY. */
+/* 
+  0 <= priority && priority <= 63 
+  0은 가장 낮은 우선순위
+  63은 가장 높은 우선순위
+  우선순위는 스레드가 생성될 때 초기화 된다. 
+  우선순위는 4번째 클럭마다 다시 계산 된다.
+  primary = floor(PRI_MAX - (recent_cpu / 4) - (nice * 2))
+*/
 void
 thread_set_priority (int new_priority) 
 {
@@ -354,6 +362,14 @@ thread_get_priority (void)
 }
 
 /* Sets the current thread's nice value to NICE. */
+/* 
+  -20 <= nice && nice <= 20
+  nice가 0인 경우에는 스레드 우선순위에 영향을 끼치지 않는다.
+  양수일 경우 우선 순위가 감소된다.
+  음수일 경우 우선 순위가 증가한다. 
+  초기에 쓰레드는 0으로 nice가 초기화 된다.
+  그 외의 쓰레드는 부모 스레드의 nice로 초기화 된다. 
+*/
 void
 thread_set_nice (int nice UNUSED) 
 {
@@ -369,6 +385,12 @@ thread_get_nice (void)
 }
 
 /* Returns 100 times the system load average. */
+/*
+  시스템이 켜질 때, load_avg는 0으로 초기화 된다.
+  load_avg는 매 초 갱신된다.
+  load_avg = (59/60) * load_avg + (1/60)*ready_threads
+  ready_threads는 업데이트가 될때, 실행되거나 곧 실행할 쓰레드의 수이다.(휴유중인 쓰레드를 제외한다)
+*/
 int
 thread_get_load_avg (void) 
 {
@@ -377,6 +399,19 @@ thread_get_load_avg (void)
 }
 
 /* Returns 100 times the current thread's recent_cpu value. */
+/*
+  recent_cput는 nice가 음수일 경우 음수가 될 수 있다.
+  recent_cput는 초당 한 번 다시 계산된다.
+  timer intterupt가 일어날때마다, recent_cpu는 1씩 증가된다. 
+  초기에 쓰레드는 0으로 recent_cpu가 초기화 된다.
+  recent_cpu = (2*load_avg)/(2*load_avg + 1) * recent_cpu + nice
+  recent_cpu를 계산할때는 (2*load_avg)/(2*load_avg + 1)를 구한 뒤 
+  구한 값에 recent_cpu를 구하도록 하자. overflow가 일어날 수 있다. 
+
+  ex)
+  int coefficient_of_load_avg = (2*load_avg)/(2*load_avg +1)
+  recent_cpu *= coefficient_of_load_avg
+*/
 int
 thread_get_recent_cpu (void) 
 {
