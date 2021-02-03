@@ -1,0 +1,32 @@
+A.1 Loading
+이 부분은 핀토스로더와 basic kernel초기화에 대해서 다루고 있다.
+
+A.1.1 The Loader
+핀토스가 시작되는 부분은 바로 loader(threads/loader.s - 어셈블리 소스 코드)이다.
+PC BIOS는 메모리에 그 loader를 불러옵니다. 차례대로 그 loader는 커널을 찾고 디스크에서
+메모리로 불러온뒤 kernel을 시작합니다. loader가 어떻게 작동하는지 이해할 필요는 없지만,
+만약 관심이 있다면 loader의 소스와 함께 계속 읽어보시길 바랍니다. 읽으시려면 chapter3에서
+설명된 80x86아키텍처의 기초에 대해서 이해하시고 있어야합니다. 
+
+PC BIOS는 첫번째 하드디스크의 첫번째 sector에 있는 로더를 불러옵니다. 이 섹터는 MBR(
+master boot record)이라고 불립니다. PC규칙에 따라 partion table을 위해서 64bytes의
+MBR을 예약합니다. 그리고 pintos는 커널 명령인수를 위해서 128bytes를 추가적으로 사용합니다.
+
+pintos loader 와 kernel은 같은 디스크에 있을 필요가 없습니다. 또한, 특정 위치에 
+커널이 있을 필요도 없습니다. loader의 첫번째 작업은 각 하드디스크의 pation table을 읽기
+위해 kernel을 찾고, pintos kernel이 사용될 부팅가능한 영역을 찾아보는 것입니다.
+
+~~~.. 
+
+A.1.2 Low-Level kernel Initialization
+loader가 마지막으로 해야할 것은 제어권을 커널의 진입점(start function in threads/start.S)에
+전달해주는 것입니다. 이코드가 하는 일은 CPU를 16-bit 리얼모드에서 현대의 80x86 운영체제에서 사용
+되는 32-bit보호모드로 전환하는 것입니다. 시작 코드가 첫번째로 하는 것은 BIOS에 PC의 메모리 크기가 
+얼마인지 물어보는 것입니다. 이것이 가능한 가장 단순한 BIOS함수는 64MB이상의 RAM만 감지할 수 있기에
+pintos가 지원하는 실질적인 한계입니다. 그 함수는 메모리사이즈를 페이지단위로, 전역변수인 
+init_ram_pages에 저장합니다. 
+
+CPU초기화의 첫번째 부분은 A20줄을 활성화하는 것입니다. 이는 20이 부여된 CPU의 주소를 의미합니다. 
+역사적 이유로, PC는 이 주소줄이 0으로 고정된 상태에서 부팅됩니다. 
+다음에는, loader는 basic page table을 생성합니다. 이 page table은 가상 메모리베이스에 있는
+64MB를 동일한 물리적 주소에 직접 매핑합니다. 

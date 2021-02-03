@@ -115,12 +115,3 @@ In tests/filesys/extended/grow-too-big:
 
 backtrace는 call stack을 제거하는데 있어서 충분합니다.
 CallStack 헤더와 .trailer도 삭제한다.
-
-
-
-
-
-
-
-
-
