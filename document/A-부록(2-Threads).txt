@@ -1,0 +1,25 @@
+A.2 threads
+A.2.1 struct thread
+struct thread는 pintos에서 다루는 thread data 구조입니다. 이는 "threads/thread.h"
+에 선언되어있습니다. 
+
+struct thread
+ - 쓰레드나 user process를 나타냅니다. thread에는 멤버를 추가하거나 삭제해야
+ 합니다. 모든 struct thread는 자체 메모리 페이지의 시작부분을 차지합니다. 
+ 페이지의 나머지부분은 쓰레드 스택으로 사용됩니다. 쓰레드 스택은 페이지의 끝으로
+ 아래로 내려갑니다. 
+ 
+ 여기에는 두가지 결과가 있습니다. 먼저, struct thread는 더 커져서는 안됩니다. 
+ 그렇게 된다면, 커널 스택이 필요한 공간이 없어집니다. struct thread의 기본은 
+ 아주 작은 사이즈 byte만 갖도록하는 것입니다. 아마도 1kB이하여야 할 것입니다. 
+ 두번째로, Kernel stacks는 너무 커지면 안됩니다. 만약 stackoverflow가 생긴다면 
+ 쓰레드 상태는 망가지게 됩니다. 그러므로 커널 함수는 큰 구조체나 non-static한 local
+ 변수를 선언하지 않는게 좋습니다. 대신에 malloc을 사용하거나 palloc_get_page를 사용하세요.
+
+
+========
+
+========
+
+A.2.2
+
