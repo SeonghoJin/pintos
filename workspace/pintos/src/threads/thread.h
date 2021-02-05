@@ -7,15 +7,27 @@
 
 /* States in a thread's life cycle. */
 enum thread_status
-  {
+  { 
+    /*
+    주어진 시간에 정확하게 하나만 실행되며,
+    thread_current()를 통해서 현재 실행중인
+    쓰레드를 알 수 있다*/
     THREAD_RUNNING,     /* Running thread. */
+    /*
+    더블 링크 리스트 타입인 ready_list에 저장되어 있다 */
     THREAD_READY,       /* Not running but ready to run. */
+    /*
+    /*
+    thread_unblock을 하게 되면 THREAD_READY상태가 된다.
+    thread_unblock은 스레드를 자동으로 차단 또는 차단 해제하는
+    pintos의 동기화 기본요소입니다.  */
     THREAD_BLOCKED,     /* Waiting for an event to trigger. */
     THREAD_DYING        /* About to be destroyed. */
   };
 
 /* Thread identifier type.
-   You can redefine this to whatever type you like. */
+   You can redefine this to whatever type you like. 
+   모든 스레드는 커널의 전체 생명주기에서 고유한 식별자로써 id를 가진다.*/
 typedef int tid_t;
 #define TID_ERROR ((tid_t) -1)          /* Error value for tid_t. */
 
