@@ -6,5 +6,6 @@ services:
     environment:
         - TERM=xterm-256color
     volumes:
-      - ./home/.bashrc:/root/.bashrc
+      - ./env/.bashrc:/root/.bashrc
+      - ./env/sources.list:/etc/apt/sources.list
       - ./workspace:/root/workspace
