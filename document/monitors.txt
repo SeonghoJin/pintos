@@ -10,4 +10,87 @@
 - 공유자원 
 - 공유자원 접근 함수
 - 상호배타 큐
-- 조건동기 큐
+- 조건동기 큐 
+예제 코드
+public class Main {
+    public static void main(String[] args) throws InterruptedException {
+            BankAccount b = new BankAccount();
+            Parent p = new Parent(b);
+            Child c = new Child(b);
+            p.start();
+            c.start();
+        p.join();
+        c.join();
+            System.out.println( "\nbalance = " + b.getBalance());
+        }
+    }
+
+class BankAccount {
+    int balance;
+    synchronized void deposit(int amt) {
+        int temp = balance + amt;
+        System.out.print("+");
+        balance = temp;
+    }
+    synchronized void withdraw(int amt) {
+        int temp = balance - amt;
+        System.out.print("-");
+        balance = temp;
+    }
+    int getBalance() {
+        return balance;
+    }
+}
+
+class Parent extends Thread {
+    BankAccount b;
+    Parent(BankAccount b) {
+        this.b = b;
+    }
+    public void run() {
+        for (int i=0; i<100000; i++)
+            b.deposit(1000);
+    }
+}
+
+class Child extends Thread {
+    BankAccount b;
+    Child(BankAccount b) {
+        this.b = b;
+    }
+    public void run() {
+        for (int i=0; i<100000; i++)
+            b.withdraw(1000);
+    }
+}
+
+//// 입금 출금 반복 수행
+
+class BankAccount {
+	int balance;
+	boolean p_turn = true;
+	synchronized void deposit(int amt) {
+		int temp = balance + amt;
+		System.out.print("+");
+		balance = temp;
+		notify();
+		p_turn = false;
+		try {
+			wait();
+		} catch (InterruptedException e) {}
+	}
+	synchronized void withdraw(int amt) {
+		while (p_turn)
+			try {
+				wait();
+			} catch (InterruptedException e) {}
+		int temp = balance - amt;
+		System.out.print("-");
+		balance = temp;
+		notify();
+		p_turn = true;
+	}
+	int getBalance() {
+		return balance;
+	}
+}
