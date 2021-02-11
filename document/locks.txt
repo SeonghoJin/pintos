@@ -1,0 +1,25 @@
+동기화를 구현하는 방법 중 하나. 
+lock의 발전된 형태가 세마포어라고 합니다. 
+
+구현 방법
+
+int withdraw(account, amount){
+    lock(lock);
+    balance = account.getBalance();
+    ~
+    unlock(lock);
+}
+
+struct lock {int held = 0;}
+
+void lock(struct lock *l){
+    while(l -> held);
+    l -> held = 1;
+}
+
+void unlock(struct lock &l){
+    l -> held = 0;
+}
+
+현재 lock과 같은 경우는 busy-wait이라고 해서, 
+계속 cpu를 사용하면서 무한루프를 돌고 있습니다. 
