@@ -68,4 +68,9 @@ A.2.3
 schedule은 쓰레드를 바꿀 책임이 있습니다. threads/thread.c에 있는 
 thread_block, thread_exit, thread_yield 이 세개의 함수만으로 쓰레드를 
 바꾸어야합니다. 이 함수들 중 어느 것이든 schedule함수를 호출하기전에 인터럽트를 
-비활성화해야하고, 실행중인 쓰레드의 상태를 실행중을 제외한 다른 상태로 바꾸고, 
+비활성화해야하고, 실행중인 쓰레드의 상태를 실행중을 제외한 다른 상태로 바꿔야합니다. 
+
+schedule은 local 변수인 cur로 현재 쓰레드를 저장합니다. 그리고 local변수인 
+next로 다음 쓰레드를 결정합니다. 그런 다음 switch_thread를 호출해서 실제로 변경합니다.
+
+스케쥴러의 나머지 부분은 thread_schedule_tail로 구현되어야 합니다. 
