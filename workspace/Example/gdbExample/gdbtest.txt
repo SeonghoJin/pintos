@@ -1,0 +1,62 @@
+% gcc –g test.c –o test
+
+% test
+
+실행이 되지 않으면 mv test a.out으로 하여a.out을 실행시킨다. 실행을 시키면 원하는 답이 아니다. 그러면 gdb를 해보자.
+
+% gdb a.out
+
+(gdb) list        // list는 소스 내용을 10줄씩 보여준다.
+
+
+ 
+
+(gdb) b 9  // break 9 : for 문에 이상이 있다고 판단하여 line 9에 breakpoint를 잡는다.
+
+Breakpoint 1 at 0x80483d6: file test.c, line 9.
+
+(gdb) r               // run : breakpoint까지 실행된다.
+
+Starting program: /home/pllab/chowing/gdb/a.out
+
+Breakpoint 1, main () at test.c:9
+
+9  for( i=0; i<5 ; i++){
+
+(gdb) s                           // step : 한줄 실행시킨다.
+
+j=i/2+i;
+
+(gdb) s
+
+11  printf(“j is %f \n”,j);
+
+(gdb) p j         // print j : j의 값을 본다.
+
+$2 = 0
+
+(gdb) n
+
+j is 0.000000
+
+for( i=0; i<5 ; i++){
+
+(gdb) display i
+
+(gdb) display j
+
+(gdb) n
+
+11  printf(“j is %f \n”,j);
+
+2: j = 1
+
+1: i = 1
+
+// 10 line에서 실행 후 i=1일 때, j=1이므로 10 line에서 잘못된 것을 알 수 있다.
+
+// 10 line을 j = (double) i/2 + i; 로 고친다.
+
+(gdb) quit
+
+
