@@ -1,0 +1,37 @@
+생산자-소비자 문제는 여러개의 프로세스를 어떻게 동기화 시킬 것인가에 대한 고전적인 문제이다. 
+
+유한한 개수의 물건을 저장해야 하는 공간에 생산자와 소비자가 접근한다고 가정하자. 
+생산자는 다음과 같은 문제를 겪을 수 있다. 
+생산자는 저장소가 꽉 차있을 경우 문제가 생긴다. 
+소비자는 저장소에 물건이 없을 경우 문제가 생길 수 있다. 
+
+모니터 방법을 사용하는 방법.
+
+class BankAccount {
+	int balance;
+	boolean p_turn = true;
+	synchronized void deposit(int amt) {
+		int temp = balance + amt;
+		System.out.print("+");
+		balance = temp;
+		notify();
+		p_turn = false;
+		try {
+			wait();
+		} catch (InterruptedException e) {}
+	}
+	synchronized void withdraw(int amt) {
+		while (p_turn)
+			try {
+				wait();
+			} catch (InterruptedException e) {}
+		int temp = balance - amt;
+		System.out.print("-");
+		balance = temp;
+		notify();
+		p_turn = true;
+	}
+	int getBalance() {
+		return balance;
+	}
+}
