@@ -5,3 +5,6 @@
 
 1. 인터럽트 비활성화하기 
 2. 세마포어
+3. Locks
+4. Monitors
+5. Optimization Barriers
