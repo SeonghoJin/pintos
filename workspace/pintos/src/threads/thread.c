@@ -1,4 +1,3 @@
-/* 쓰레드를 도와주기 위해서 몇몇의 함수가 있는 파일입니다" */
 #include "threads/thread.h"
 #include <debug.h>
 #include <stddef.h>
@@ -72,11 +71,6 @@ static void schedule (void);
 void thread_schedule_tail (struct thread *prev);
 static tid_t allocate_tid (void);
 
-
-/* main()함수에서 쓰레드 시스템을 구현하기 위해서 불립니다. 이 함수의
-  목표는 pintos의 초기 쓰레드를 위해서 struct thread를 생성하는 것입니다.
-  before thread_init을 실행하기 전에 thread_current()는 실행되는 쓰레드
-  의 magic value가 올바르지 않기 때문에 실패할 것입니다.*/
 /* Initializes the threading system by transforming the code
    that's currently running into a thread.  This can't work in
    general and it is possible in this case only because loader.S
@@ -105,8 +99,7 @@ thread_init (void)
   initial_thread->status = THREAD_RUNNING;
   initial_thread->tid = allocate_tid ();
 }
-/* 스케쥴러를 시작하기 전에 main()에서 불립니다.
-   유휴, 다른 쓰레드가 준비되지 않은 경우 예약된 쓰레드를 만듭니다. */
+
 /* Starts preemptive thread scheduling by enabling interrupts.
    Also creates the idle thread. */
 void

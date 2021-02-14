@@ -10,7 +10,6 @@ services:
       && apt -y install gdb
       && cd root/workspace/bochs-2.6.2 && make install
       && ((ls /usr/bin/gcc-4.4 >> /dev/null 2>&1 && mv /usr/bin/gcc-4.4 /usr/bin/gcc) || echo empty)
-      && cd ~/workspace/pintos/src/threads && ~/workspace/pintos/src/utils/pintos -- run alarm-multiple
       && sleep infinity
       "
     build: .
