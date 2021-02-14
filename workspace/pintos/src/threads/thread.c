@@ -166,6 +166,8 @@ tid_t
 thread_create (const char *name, int priority,
                thread_func *function, void *aux) 
 {
+  printf("thread_create 호출");
+  printf("%s %d\n", name, priority);
   struct thread *t;
   struct kernel_thread_frame *kf;
   struct switch_entry_frame *ef;
@@ -223,7 +225,7 @@ thread_block (void)
 {
   ASSERT (!intr_context ());
   ASSERT (intr_get_level () == INTR_OFF);
-
+  printf("1");
   thread_current ()->status = THREAD_BLOCKED;
   schedule ();
 }
@@ -311,7 +313,7 @@ thread_yield (void)
 {
   struct thread *cur = thread_current ();
   enum intr_level old_level;
-  
+  // printf("%s", thread_name ());
   ASSERT (!intr_context ());
 
   old_level = intr_disable ();
