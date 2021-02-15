@@ -2,3 +2,5 @@ bochs-2.6.2
 .vscode
 */Example/**/*.out
 */Example/**/*.o
+*/Example/**/*.exe
+*/Example/**/*.out
