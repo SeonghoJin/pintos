@@ -166,7 +166,7 @@ tid_t
 thread_create (const char *name, int priority,
                thread_func *function, void *aux) 
 {
-  printf("thread_create 호출");
+  printf("thread_create 호출 ");
   printf("%s %d\n", name, priority);
   struct thread *t;
   struct kernel_thread_frame *kf;
