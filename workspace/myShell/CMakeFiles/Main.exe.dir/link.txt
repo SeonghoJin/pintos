@@ -1,1 +1,0 @@
-g++     CMakeFiles/Main.exe.dir/main.cpp.o  -o src/Main.exe 

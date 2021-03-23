@@ -1,3 +1,0 @@
-/root/workspace/myShell/CMakeFiles/rebuild_cache.dir
-/root/workspace/myShell/CMakeFiles/myshell.dir
-/root/workspace/myShell/CMakeFiles/edit_cache.dir
